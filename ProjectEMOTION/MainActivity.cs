@@ -4,6 +4,15 @@ using Android.OS;
 using Plugin.Media;
 using System;
 
+/* 
+ To-Do:
+     - Make a new page tabbed page, tabs only appear once progress bar has dissapeared and results are ready
+     - Show results and smart people results in their tabs
+     - Refactor pick and take photo to use function
+     - Check for network connection
+     */
+
+
 namespace ProjectEMOTION
 {
     [Activity(Label = "ProjectEMOTION", MainLauncher = true, Icon = "@drawable/icon")]
@@ -51,6 +60,10 @@ namespace ProjectEMOTION
                 return;
 
             Console.WriteLine(file.Path);
+
+            string filePath = file.Path;
+
+            file.Dispose();
         }
 
         private async void _btnTakePhoto_Click(object sender, System.EventArgs e)
@@ -74,9 +87,14 @@ namespace ProjectEMOTION
             if (file == null)
                 return;
 
-            Console.WriteLine(file.Path);
+            //Console.WriteLine(file.Path);
+
+            string filePath = file.Path;
 
             file.Dispose();
+            var intent = new Android.Content.Intent(this, typeof(TakePhotoActivity));
+            intent.PutExtra("filePath", filePath);
+            StartActivity(intent);
 
             // After this call function that opens new page and submits it to the microsoft api
 
