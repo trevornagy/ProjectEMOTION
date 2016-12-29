@@ -28,6 +28,7 @@ namespace ProjectEMOTION
 
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.Main);
+
             _btnTakePhoto = FindViewById<Button>(Resource.Id.btnTakePhoto);
             _btnChoosePhoto = FindViewById<Button>(Resource.Id.btnChoosePhoto);
             _btnTutorial = FindViewById<Button>(Resource.Id.btnTutorial);
@@ -64,6 +65,8 @@ namespace ProjectEMOTION
             string filePath = file.Path;
 
             file.Dispose();
+
+
         }
 
         private async void _btnTakePhoto_Click(object sender, System.EventArgs e)
