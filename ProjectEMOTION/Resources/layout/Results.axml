@@ -2,13 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:minWidth="25px"
-    android:minHeight="25px">
+    android:layout_height="match_parent">
     <ImageView
         android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        android:id="@+id/imgFace" />
+        android:id="@+id/imgResults"
+        android:visibility="gone" />
+    <TextView
+        android:text="Please wait..."
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtPleaseWait"
+        android:gravity="center"
+        android:textSize="90sp" />
+    <TextView
+        android:text="(Photos of abnormally large faces will take a while to process)"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtLoadingText"
+        android:gravity="center" />
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressLoad"
+        android:visibility="visible" />
 </LinearLayout>

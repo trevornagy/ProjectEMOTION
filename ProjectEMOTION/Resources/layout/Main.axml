@@ -4,6 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:text="Please wait..."
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtHomePleaseWait"
+        android:gravity="center"
+        android:textSize="90sp"
+        android:visibility="gone" />
+    <TextView
+        android:text="(Photo is saving...)"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtHomeLoadingText"
+        android:gravity="center"
+        android:visibility="gone" />
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressHomeLoad"
+        android:visibility="gone" />
+    <TextView
         android:text="R They Mad?"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"

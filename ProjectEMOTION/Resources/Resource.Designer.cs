@@ -60,20 +60,38 @@ namespace ProjectEMOTION
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060002
-			public const int btnChoosePhoto = 2131099650;
-			
-			// aapt resource value: 0x7f060001
-			public const int btnTakePhoto = 2131099649;
-			
-			// aapt resource value: 0x7f060003
-			public const int btnTutorial = 2131099651;
+			// aapt resource value: 0x7f060005
+			public const int btnChoosePhoto = 2131099653;
 			
 			// aapt resource value: 0x7f060004
-			public const int imgFace = 2131099652;
+			public const int btnTakePhoto = 2131099652;
+			
+			// aapt resource value: 0x7f060006
+			public const int btnTutorial = 2131099654;
+			
+			// aapt resource value: 0x7f060007
+			public const int imgResults = 2131099655;
+			
+			// aapt resource value: 0x7f060002
+			public const int progressHomeLoad = 2131099650;
+			
+			// aapt resource value: 0x7f06000a
+			public const int progressLoad = 2131099658;
+			
+			// aapt resource value: 0x7f060001
+			public const int txtHomeLoadingText = 2131099649;
 			
 			// aapt resource value: 0x7f060000
-			public const int txtTitle = 2131099648;
+			public const int txtHomePleaseWait = 2131099648;
+			
+			// aapt resource value: 0x7f060009
+			public const int txtLoadingText = 2131099657;
+			
+			// aapt resource value: 0x7f060008
+			public const int txtPleaseWait = 2131099656;
+			
+			// aapt resource value: 0x7f060003
+			public const int txtTitle = 2131099651;
 			
 			static Id()
 			{
