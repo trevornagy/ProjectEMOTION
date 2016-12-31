@@ -22,10 +22,9 @@ namespace ProjectEMOTION
         private Button _btnTakePhoto;
         private Button _btnChoosePhoto;
         private Button _btnTutorial;
-        private string _imageFileLocation;
         private TextView _txtTitle;
         private Android.App.ProgressDialog progress;
-
+        private bool _clickListener;
         // To simulate loading screen
         private ImageView _imgResult;
         private ProgressBar _progressLoad;
@@ -49,72 +48,75 @@ namespace ProjectEMOTION
             _txtPleaseWait = FindViewById<TextView>(Resource.Id.txtHomePleaseWait);
             _txtMessage = FindViewById<TextView>(Resource.Id.txtHomeLoadingText);
 
-
             _btnTakePhoto.Click += _btnTakePhoto_Click;
             _btnChoosePhoto.Click += _btnChoosePhoto_Click;
             //_btnTutorial.Click += _btnTutorial_Click;
         }
 
-        private async void _btnTakePhoto_Click(object sender, EventArgs e)
+        private void _btnTakePhoto_Click(object sender, EventArgs e)
         {
-            // Launch camera
-            await CrossMedia.Current.Initialize();
-
-            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
-            {
-                Console.WriteLine("No Camera", ":( No camera available.", "OK");
-                //progress.Dismiss();
-                return;
-            }
-
-            //progress.Indeterminate = true;
-            //progress.SetCancelable(false);
-            //progress.SetProgressStyle(Android.App.ProgressDialogStyle.Spinner);
-            //progress.SetTitle("Please wait...");
-            //progress.Show();
-
-
-            var file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
-            {
-                Directory = "temp",
-                CompressionQuality = 25,
-                SaveToAlbum = false
-            });
-
-            if (file == null)
-            {
-                //progress.Dismiss();
-                return;
-            }
-
-            string filePath = file.Path;
-            file.Dispose();
-
-            var TakePhoto = new Android.Content.Intent(this, typeof(TakePhotoActivity));
-            TakePhoto.PutExtra("imageLocation", filePath);
-            StartActivity(TakePhoto);
+            _clickListener = true;
+            _bothButtons(_clickListener);
         }
-
-        private async void _btnChoosePhoto_Click(object sender, EventArgs e)
+        private void _btnChoosePhoto_Click(object sender, EventArgs e)
         {
-            // Choose from gallery
+            _clickListener = false;
+            _bothButtons(_clickListener);
+        }
+        public async void _bothButtons(bool isTakeClicked)
+        {
+            Plugin.Media.Abstractions.MediaFile file = null;
+            //var file = (Plugin.Media.Abstractions.IMedia)null;
             await CrossMedia.Current.Initialize();
 
-            if (!CrossMedia.Current.IsPickPhotoSupported)
+            if (!CrossMedia.Current.IsPickPhotoSupported || !CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
-                Console.WriteLine("No Gallery", ":( No gallery available.", "OK");
+                if (isTakeClicked == false)
+                {
+                    Console.WriteLine("No Gallery", ":( No gallery available.", "OK");
+                }
+                else
+                {
+                    Console.WriteLine("No Camera", ":( No camera available.", "OK");
+                }
+                return;
+            }
+            
+            if (isTakeClicked == true)
+            {
+                // Launch camera
+
+                //progress.Indeterminate = true;
+                //progress.SetCancelable(false);
+                //progress.SetProgressStyle(Android.App.ProgressDialogStyle.Spinner);
+                //progress.SetTitle("Please wait...");
+                //progress.Show();
+
+
+                file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
+                {
+                    Directory = "temp",
+                    CompressionQuality = 25,
+                    SaveToAlbum = false
+                });
+
+            }
+            else if (isTakeClicked == false)
+            {
+                // Choose from gallery
+
+                file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions
+                {
+                  PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small
+                });
+            }
+            if (file == null)
+            {
+                //progress.Dismiss();
                 return;
             }
 
-            var file = await CrossMedia.Current.PickPhotoAsync();
-
-            if (file == null)
-                return;
-
-            Console.WriteLine(file.Path);
-
             string filePath = file.Path;
-
             file.Dispose();
 
             var TakePhoto = new Android.Content.Intent(this, typeof(TakePhotoActivity));
@@ -126,14 +128,12 @@ namespace ProjectEMOTION
         {
             base.OnResume();
             progress.Dismiss();
-        }
+        } 
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
         {
             Plugin.Permissions.PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
-    }
-            
+    }         
 }
 
