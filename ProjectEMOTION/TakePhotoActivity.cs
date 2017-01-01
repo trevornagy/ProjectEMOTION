@@ -14,6 +14,7 @@ using Android.Graphics;
 using System.Threading.Tasks;
 using Android.Graphics.Drawables;
 using System.IO;
+using Java.IO;
 
 namespace ProjectEMOTION
 {
@@ -34,13 +35,12 @@ namespace ProjectEMOTION
             // RequestWindowFeature(WindowFeatures.NoTitle); - Remove when image is on page
 
             _imageFileLocation = Intent.GetStringExtra("imageLocation") ?? "Data not available";
-            Console.WriteLine(_imageFileLocation);
+            System.Console.WriteLine(_imageFileLocation);
 
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.Results);
             // Convert to byte array so we can send it to the microsoft API
-            // byte[] byteArray = System.IO.File.ReadAllBytes(_imageFileLocation);
 
             // Create your application here
             _imgResult = FindViewById<ImageView>(Resource.Id.imgResults);
@@ -56,31 +56,14 @@ namespace ProjectEMOTION
             Bitmap bitmapToDisplay = await LoadScaledDownBitmapForDisplayAsync(_imageFileLocation, options, (int)heightImageView, (int)widthImageView);
             _imgResult.SetImageBitmap(bitmapToDisplay);
 
-            System.IO.Stream stream = new System.IO.MemoryStream();
-            bitmapToDisplay.Compress(Bitmap.CompressFormat.Jpeg, 100, stream);
-            byte[] byteArray = null;
+            byte[] byteArray = System.IO.File.ReadAllBytes(_imageFileLocation);
 
-            using (var memoryStream = new MemoryStream())
-            {
-                stream.CopyTo(memoryStream);
-                byteArray = memoryStream.ToArray();
-            }
-
-            AccessApi(_apiURL, _apiKey, byteArray);
-
-            stream.Dispose();
+            AccessApi(_apiURL, _apiKey, byteArray);  
 
             _imgResult.Visibility = ViewStates.Visible;
             _progressLoad.Visibility = ViewStates.Gone;
             _txtPleaseWait.Visibility = ViewStates.Gone;
             _txtWaitMessage.Visibility = ViewStates.Gone;
-
-
-        }
-
-        private byte[] ReadAllBytes(Stream stream)
-        {
-            throw new NotImplementedException();
         }
 
         public void AccessApi(string url, string key, byte[] image)
@@ -93,7 +76,7 @@ namespace ProjectEMOTION
             //request.AddFile("file", imageLocation);
             IRestResponse response = client.Execute(request);
             var content = response.Content;
-            Console.WriteLine(content);
+            System.Console.WriteLine(content);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.SetMessage(content);
             Dialog dialog = alert.Create();
@@ -142,6 +125,7 @@ namespace ProjectEMOTION
 
             return await BitmapFactory.DecodeFileAsync(fileLocation, options);
         }
+
         //public void GetImageViewDimensions(ImageView imageView)
         //{
         //    int finalHeight, finalWidth;

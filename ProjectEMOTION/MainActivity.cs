@@ -107,7 +107,7 @@ namespace ProjectEMOTION
 
                 file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions
                 {
-                  PhotoSize = Plugin.Media.Abstractions.PhotoSize.Small
+                    CompressionQuality = 25
                 });
             }
             if (file == null)
