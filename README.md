@@ -10,5 +10,9 @@ RestSharp
 https://github.com/restsharp/RestSharp/wiki
 https://www.nuget.org/packages/RestSharp
 
+Newtonsoft
+http://www.newtonsoft.com/json
+https://www.nuget.org/packages/newtonsoft.json/
+
 
 
