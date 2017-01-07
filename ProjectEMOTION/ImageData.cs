@@ -14,8 +14,8 @@ namespace ProjectEMOTION
 {
     public class ImageData
     {
-        public FaceRectangle faceRectangle { get; set; }
-        public Emotions emotions { get; set; }
+        public FaceRectangle[] faceRectangle { get; set; }
+        public Scores[] scores { get; set; }
     }
     public class FaceRectangle
     {
@@ -23,9 +23,8 @@ namespace ProjectEMOTION
         public int top { get; set; }
         public int width { get; set; }
         public int height { get; set; }
-
     }
-    public class Emotions
+    public class Scores
     {
         public decimal anger { get; set; }
         public decimal contempt { get; set; }
@@ -34,6 +33,6 @@ namespace ProjectEMOTION
         public decimal happness { get; set; }
         public decimal neutral { get; set; }
         public decimal sadness { get; set; }
-        public decimal surpirse { get; set; }
+        public decimal surprise { get; set; }
     }
 }

@@ -14,7 +14,8 @@ using Android.Graphics;
 using System.Threading.Tasks;
 using Android.Graphics.Drawables;
 using System.IO;
-using Java.IO;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace ProjectEMOTION
 {
@@ -56,9 +57,18 @@ namespace ProjectEMOTION
             Bitmap bitmapToDisplay = await LoadScaledDownBitmapForDisplayAsync(_imageFileLocation, options, (int)heightImageView, (int)widthImageView);
             _imgResult.SetImageBitmap(bitmapToDisplay);
 
-            byte[] byteArray = System.IO.File.ReadAllBytes(_imageFileLocation);
+            byte[] byteArray = File.ReadAllBytes(_imageFileLocation);
 
-            AccessApi(_apiURL, _apiKey, byteArray);  
+            var results = await AccessApi(_apiURL, _apiKey, byteArray);
+            Console.WriteLine(results);
+
+            // Figure out how to deserialize data
+            //ImageData tmp = JsonConvert.DeserializeObject<ImageData>(results);
+
+            //foreach (string typeStr in tmp)
+            //{
+            //    // Do something with typeStr
+            //}
 
             _imgResult.Visibility = ViewStates.Visible;
             _progressLoad.Visibility = ViewStates.Gone;
@@ -66,21 +76,21 @@ namespace ProjectEMOTION
             _txtWaitMessage.Visibility = ViewStates.Gone;
         }
 
-        public void AccessApi(string url, string key, byte[] image)
+        public async Task<String> AccessApi(string url, string key, byte[] image)
         {
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
             request.AddHeader("Ocp-Apim-Subscription-Key", key);
             request.JsonSerializer.ContentType = "application/octet-stream";
             request.AddParameter("application/octet-stream", image, ParameterType.RequestBody);
-            //request.AddFile("file", imageLocation);
-            IRestResponse response = client.Execute(request);
-            var content = response.Content;
-            System.Console.WriteLine(content);
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.SetMessage(content);
-            Dialog dialog = alert.Create();
-            dialog.Show();
+
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            // Async execute request
+            var restResponse = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            // Return deserialize string
+            return restResponse.Content;
         }
 
         async Task<BitmapFactory.Options> GetImageSizeAsync()
@@ -95,6 +105,7 @@ namespace ProjectEMOTION
             int imageWidth = options.OutWidth;
             return options;
         }
+
         public static int CalculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
         {
             // original height and width of image
@@ -125,22 +136,5 @@ namespace ProjectEMOTION
 
             return await BitmapFactory.DecodeFileAsync(fileLocation, options);
         }
-
-        //public void GetImageViewDimensions(ImageView imageView)
-        //{
-        //    int finalHeight, finalWidth;
-
-        //    ViewTreeObserver viewTree = imageView.getViewTreeObserver();
-        //    viewTree.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
-        //    {
-        //        public Boolean onPreDraw()
-        //            {
-        //                iv.getViewTreeObserver().removeOnPreDrawListener(this);
-        //                finalHeight = imageView.getMeasuredHeight();
-        //                finalWidth = imageView.getMeasuredWidth();
-        //                return true;
-        //            }
-        //    });
-        //}
     }
 }
