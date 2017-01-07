@@ -12,7 +12,6 @@ using Android.Widget;
 using RestSharp;
 using Android.Graphics;
 using System.Threading.Tasks;
-using Android.Graphics.Drawables;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
@@ -28,8 +27,6 @@ namespace ProjectEMOTION
         private TextView _txtWaitMessage;
 
         private string _imageFileLocation;
-        const string _apiURL = "https://api.projectoxford.ai/emotion/v1.0/recognize";
-        const string _apiKey = "6ef65328819442a6aebc8de396b69f1b";
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -41,8 +38,7 @@ namespace ProjectEMOTION
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.Results);
-            // Convert to byte array so we can send it to the microsoft API
-
+            
             // Create your application here
             _imgResult = FindViewById<ImageView>(Resource.Id.imgResults);
             _progressLoad = FindViewById<ProgressBar>(Resource.Id.progressLoad);
@@ -55,20 +51,26 @@ namespace ProjectEMOTION
 
             BitmapFactory.Options options = await GetImageSizeAsync();
             Bitmap bitmapToDisplay = await LoadScaledDownBitmapForDisplayAsync(_imageFileLocation, options, (int)heightImageView, (int)widthImageView);
-            _imgResult.SetImageBitmap(bitmapToDisplay);
 
+            // Convert to byte array so we can send it to the microsoft API
             byte[] byteArray = File.ReadAllBytes(_imageFileLocation);
 
-            var results = await AccessApi(_apiURL, _apiKey, byteArray);
+            var results = await AccessApi(byteArray);
             Console.WriteLine(results);
 
-            // Figure out how to deserialize data
-            //ImageData tmp = JsonConvert.DeserializeObject<ImageData>(results);
+            // Deserialize data
+            List<ImageData> imageResults = JsonConvert.DeserializeObject<List<ImageData>>(results);
 
-            //foreach (string typeStr in tmp)
-            //{
-            //    // Do something with typeStr
-            //}
+            // Print data
+            foreach (ImageData data in imageResults)
+            {
+                Console.WriteLine(data.faceRectangle.left);
+                Console.WriteLine(data.faceRectangle.height);
+                Console.WriteLine(data.faceRectangle.top);
+                Console.WriteLine(data.faceRectangle.width);
+            }
+
+            _imgResult.SetImageBitmap(bitmapToDisplay);
 
             _imgResult.Visibility = ViewStates.Visible;
             _progressLoad.Visibility = ViewStates.Gone;
@@ -76,8 +78,11 @@ namespace ProjectEMOTION
             _txtWaitMessage.Visibility = ViewStates.Gone;
         }
 
-        public async Task<String> AccessApi(string url, string key, byte[] image)
+        public async Task<String> AccessApi(byte[] image)
         {
+            const string url = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+            const string key = "6ef65328819442a6aebc8de396b69f1b";
+
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
             request.AddHeader("Ocp-Apim-Subscription-Key", key);
@@ -89,7 +94,7 @@ namespace ProjectEMOTION
             // Async execute request
             var restResponse = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
-            // Return deserialize string
+            // Return string
             return restResponse.Content;
         }
 

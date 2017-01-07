@@ -26,10 +26,10 @@ namespace ProjectEMOTION
         private Android.App.ProgressDialog progress;
         private bool _clickListener;
         // To simulate loading screen
-        private ImageView _imgResult;
-        private ProgressBar _progressLoad;
-        private TextView _txtMessage;
-        private TextView _txtPleaseWait;
+        //private ImageView _imgResult;
+        //private ProgressBar _progressLoad;
+        //private TextView _txtMessage;
+        //private TextView _txtPleaseWait;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -44,9 +44,9 @@ namespace ProjectEMOTION
             _btnTutorial = FindViewById<Button>(Resource.Id.btnTutorial);
             _txtTitle = FindViewById<TextView>(Resource.Id.txtTitle);
 
-            _progressLoad = FindViewById<ProgressBar>(Resource.Id.progressHomeLoad);
-            _txtPleaseWait = FindViewById<TextView>(Resource.Id.txtHomePleaseWait);
-            _txtMessage = FindViewById<TextView>(Resource.Id.txtHomeLoadingText);
+            //_progressLoad = FindViewById<ProgressBar>(Resource.Id.progressHomeLoad);
+            //_txtPleaseWait = FindViewById<TextView>(Resource.Id.txtHomePleaseWait);
+            //_txtMessage = FindViewById<TextView>(Resource.Id.txtHomeLoadingText);
 
             _btnTakePhoto.Click += _btnTakePhoto_Click;
             _btnChoosePhoto.Click += _btnChoosePhoto_Click;

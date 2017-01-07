@@ -14,8 +14,8 @@ namespace ProjectEMOTION
 {
     public class ImageData
     {
-        public FaceRectangle[] faceRectangle { get; set; }
-        public Scores[] scores { get; set; }
+        public FaceRectangle faceRectangle { get; set; }
+        public Scores scores { get; set; }
     }
     public class FaceRectangle
     {
