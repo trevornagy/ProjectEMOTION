@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/imgResults"
-        android:visibility="visible" />
+        android:visibility="gone" />
     <TextView
         android:text="Please wait..."
         android:textAppearance="?android:attr/textAppearanceLarge"
