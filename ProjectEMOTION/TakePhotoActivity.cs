@@ -76,7 +76,7 @@ namespace ProjectEMOTION
             foreach (ImageData data in imageResults)
             {
                 canvas.DrawBitmap(drawableBitmap, 0, 0, null);
-                canvas.DrawRect(data.faceRectangle.left, data.faceRectangle.height, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height), paint);
+                canvas.DrawRect(data.faceRectangle.left, data.faceRectangle.top, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height), paint);
                 _imgResult.SetImageBitmap(drawableBitmap);
                 Console.WriteLine(data.faceRectangle.left);
                 Console.WriteLine(data.faceRectangle.height);
