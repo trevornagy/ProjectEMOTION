@@ -56,21 +56,35 @@ namespace ProjectEMOTION
             byte[] byteArray = File.ReadAllBytes(_imageFileLocation);
 
             var results = await AccessApi(byteArray);
-            Console.WriteLine(results);
+            // Console.WriteLine(results);
+
+            // CustomImageView.RectangleData(results, _imageFileLocation);
 
             // Deserialize data
             List<ImageData> imageResults = JsonConvert.DeserializeObject<List<ImageData>>(results);
 
+            
+            //img.setImageBitmap(bmp);
+
+            Paint paint = new Paint();
+            paint.Color = Color.Blue;
+            paint.SetStyle(Paint.Style.Stroke);
+            paint.StrokeWidth = 5;
+            Bitmap drawableBitmap = bitmapToDisplay.Copy(Bitmap.Config.Argb8888, true);
+            Canvas canvas = new Canvas(drawableBitmap);
             // Print data
             foreach (ImageData data in imageResults)
             {
+                canvas.DrawBitmap(drawableBitmap, 0, 0, null);
+                canvas.DrawRect(data.faceRectangle.left, data.faceRectangle.height, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height), paint);
+                _imgResult.SetImageBitmap(drawableBitmap);
                 Console.WriteLine(data.faceRectangle.left);
                 Console.WriteLine(data.faceRectangle.height);
                 Console.WriteLine(data.faceRectangle.top);
                 Console.WriteLine(data.faceRectangle.width);
             }
 
-            _imgResult.SetImageBitmap(bitmapToDisplay);
+            // _imgResult.SetImageBitmap(bitmapToDisplay);
 
             _imgResult.Visibility = ViewStates.Visible;
             _progressLoad.Visibility = ViewStates.Gone;
@@ -141,5 +155,6 @@ namespace ProjectEMOTION
 
             return await BitmapFactory.DecodeFileAsync(fileLocation, options);
         }
+
     }
 }
