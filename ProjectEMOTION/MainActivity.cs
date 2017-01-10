@@ -96,7 +96,7 @@ namespace ProjectEMOTION
                 file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
                 {
                     Directory = "temp",
-                    CompressionQuality = 25,
+                    // CompressionQuality = 25,
                     SaveToAlbum = false
                 });
 
@@ -107,7 +107,7 @@ namespace ProjectEMOTION
 
                 file = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions
                 {
-                    CompressionQuality = 25
+                    // CompressionQuality = 25
                 });
             }
             if (file == null)

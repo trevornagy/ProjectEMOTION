@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+using Android.Media;
+using Android.Util;
 
 namespace ProjectEMOTION
 {
@@ -25,6 +27,9 @@ namespace ProjectEMOTION
         private ProgressBar _progressLoad;
         private TextView _txtPleaseWait;
         private TextView _txtWaitMessage;
+        string tag = "ProjectEMOTION";
+
+        List<RectF> _rectangles = new List<RectF>();
 
         private string _imageFileLocation;
 
@@ -33,7 +38,6 @@ namespace ProjectEMOTION
             // RequestWindowFeature(WindowFeatures.NoTitle); - Remove when image is on page
 
             _imageFileLocation = Intent.GetStringExtra("imageLocation") ?? "Data not available";
-            System.Console.WriteLine(_imageFileLocation);
 
             base.OnCreate(savedInstanceState);
 
@@ -52,19 +56,23 @@ namespace ProjectEMOTION
             BitmapFactory.Options options = await GetImageSizeAsync();
             Bitmap bitmapToDisplay = await LoadScaledDownBitmapForDisplayAsync(_imageFileLocation, options, (int)heightImageView, (int)widthImageView);
 
+            // Delete original image
+            Java.IO.File originalImage = new Java.IO.File(_imageFileLocation);
+            bool deleted = originalImage.Delete();
+
+            // Set location to NEW scaled down location
+            _imageFileLocation = await getImageUri(Application.Context, bitmapToDisplay);
+            Log.Info(tag, _imageFileLocation);
+
             // Convert to byte array so we can send it to the microsoft API
             byte[] byteArray = File.ReadAllBytes(_imageFileLocation);
 
             var results = await AccessApi(byteArray);
-            // Console.WriteLine(results);
 
             // Deserialize data async
             var task = Task.Factory.StartNew(() => JsonConvert.DeserializeObject<List<ImageData>>(results));
             var imageResults = await task;
             // List<ImageData> imageResults = JsonConvert.DeserializeObject<List<ImageData>>(results); <-- This isn't async
-
-
-            //img.setImageBitmap(bmp);
 
             Paint paint = new Paint();
             paint.Color = Color.Blue;
@@ -74,16 +82,18 @@ namespace ProjectEMOTION
             bitmapToDisplay.Recycle();
             Canvas canvas = new Canvas(drawableBitmap);
             // Print data
+
+            RectF rect;
+
             foreach (ImageData data in imageResults)
             {
                 canvas.DrawBitmap(drawableBitmap, 0, 0, null);
-                canvas.DrawRect(data.faceRectangle.left, data.faceRectangle.top, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height), paint);
-                
-                Console.WriteLine(data.faceRectangle.left);
-                Console.WriteLine(data.faceRectangle.height);
-                Console.WriteLine(data.faceRectangle.top);
-                Console.WriteLine(data.faceRectangle.width);
+                rect = new RectF(data.faceRectangle.left, data.faceRectangle.top, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height));
+                canvas.DrawRect(rect, paint);
+                _rectangles.Add(rect);
+                //_rectangles.Add(new Rect(data.faceRectangle.left, data.faceRectangle.top, (data.faceRectangle.width + data.faceRectangle.left), (data.faceRectangle.top + data.faceRectangle.height)));
             }
+
             _imgResult.SetImageBitmap(drawableBitmap);
             // drawableBitmap.Recycle();
 
@@ -93,7 +103,53 @@ namespace ProjectEMOTION
             _imgResult.Visibility = ViewStates.Visible;
         }
 
-        public async Task<String> AccessApi(byte[] image)
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            MotionEventActions action = e.Action & MotionEventActions.Mask;
+
+            switch (action)
+            {
+                case MotionEventActions.Down:
+
+                    float touchX = e.GetX();
+                    float touchY = e.GetY();
+
+                    Console.WriteLine("Touching down");
+                    foreach (RectF rect in _rectangles)
+                    {
+                        Console.WriteLine("rectangles");
+                        if (rect.Contains(touchX, touchY))
+                        {
+                            Console.WriteLine("You touched a rectangle");
+                        }
+                    }
+                    break;
+            }
+            return base.OnTouchEvent(e);
+        }
+        // Get new location for byteArray
+        public async Task<string> getImageUri(Context inContext, Bitmap inImage)
+        {
+            string sdCardPath = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath + "/Android/data/ProjectEMOTION.ProjectEMOTION/files/Pictures/temp";
+            var path = System.IO.Path.Combine(sdCardPath, "image.jpg");
+            var stream = new FileStream(path, FileMode.Create);
+            await inImage.CompressAsync(Bitmap.CompressFormat.Jpeg, 25, stream);
+            stream.Close();
+
+            return path.ToString();
+        }
+
+        //public string GetRealPathFromURI(Android.Net.Uri contentUri)
+        //{
+        //    var mediaStoreImagesMediaData = "_data";
+        //    string[] projection = { mediaStoreImagesMediaData };
+        //    Android.Database.ICursor cursor = this.ManagedQuery(contentUri, projection, null, null, null);
+        //    int columnIndex = cursor.GetColumnIndexOrThrow(mediaStoreImagesMediaData);
+        //    cursor.MoveToFirst();
+        //    return cursor.GetString(columnIndex);
+        //}
+
+        public async Task<String> AccessApi(Byte[] image)
         {
             const string url = "https://api.projectoxford.ai/emotion/v1.0/recognize";
             const string key = "6ef65328819442a6aebc8de396b69f1b";
