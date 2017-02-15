@@ -12,6 +12,12 @@
         android:id="@+id/imgResults"
         android:visibility="gone" />
     <TextView
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtResults"
+        android:visibility="gone" />
+    <TextView
         android:text="Please wait..."
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"

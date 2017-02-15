@@ -27,6 +27,7 @@ namespace ProjectEMOTION
         private ProgressBar _progressLoad;
         private TextView _txtPleaseWait;
         private TextView _txtWaitMessage;
+        private TextView _txtResult;
         string tag = "ProjectEMOTION";
 
         List<RectF> _rectangles = new List<RectF>();
@@ -35,7 +36,7 @@ namespace ProjectEMOTION
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
-            // RequestWindowFeature(WindowFeatures.NoTitle); - Remove when image is on page
+            // RequestWindowFeature(WindowFeatures.NoTitle);// - Remove when image is on page
 
             _imageFileLocation = Intent.GetStringExtra("imageLocation") ?? "Data not available";
 
@@ -48,6 +49,7 @@ namespace ProjectEMOTION
             _progressLoad = FindViewById<ProgressBar>(Resource.Id.progressLoad);
             _txtPleaseWait = FindViewById<TextView>(Resource.Id.txtPleaseWait);
             _txtWaitMessage = FindViewById<TextView>(Resource.Id.txtLoadingText);
+            _txtResult = FindViewById<TextView>(Resource.Id.txtResults);
 
             var metrics = Resources.DisplayMetrics;
             double heightImageView = metrics.HeightPixels * 0.6D;
@@ -81,7 +83,6 @@ namespace ProjectEMOTION
             Bitmap drawableBitmap = bitmapToDisplay.Copy(Bitmap.Config.Argb8888, true);
             bitmapToDisplay.Recycle();
             Canvas canvas = new Canvas(drawableBitmap);
-            // Print data
 
             RectF rect;
 
@@ -101,32 +102,37 @@ namespace ProjectEMOTION
             _txtPleaseWait.Visibility = ViewStates.Gone;
             _txtWaitMessage.Visibility = ViewStates.Gone;
             _imgResult.Visibility = ViewStates.Visible;
+            _txtResult.Visibility = ViewStates.Visible;
+            _txtResult.Text = results;
         }
 
-        public override bool OnTouchEvent(MotionEvent e)
-        {
-            MotionEventActions action = e.Action & MotionEventActions.Mask;
+        //public override bool OnTouchEvent(MotionEvent e)
+        //{
+        //    MotionEventActions action = e.Action & MotionEventActions.Mask;
 
-            switch (action)
-            {
-                case MotionEventActions.Down:
+        //    switch (action)
+        //    {
+        //        case MotionEventActions.Down:
 
-                    float touchX = e.GetX();
-                    float touchY = e.GetY();
+        //            float touchX = e.GetX();
+        //            float touchY = e.GetY();
+        //            Console.WriteLine(touchX);
+        //            Console.WriteLine(touchY);
 
-                    Console.WriteLine("Touching down");
-                    foreach (RectF rect in _rectangles)
-                    {
-                        Console.WriteLine("rectangles");
-                        if (rect.Contains(touchX, touchY))
-                        {
-                            Console.WriteLine("You touched a rectangle");
-                        }
-                    }
-                    break;
-            }
-            return base.OnTouchEvent(e);
-        }
+        //            foreach (RectF rect in _rectangles)
+        //            {
+        //                Console.WriteLine(rect);
+        //                Console.WriteLine(rect.Contains(touchX, touchY));
+        //                if (rect.Contains(touchX, touchY))
+        //                {
+        //                    Console.WriteLine("You touched a rectangle");
+        //                    _txtResult.Visibility = ViewStates.Visible;
+        //                }
+        //            }
+        //            break;
+        //    }
+        //    return base.OnTouchEvent(e);
+        //}
         // Get new location for byteArray
         public async Task<string> getImageUri(Context inContext, Bitmap inImage)
         {
