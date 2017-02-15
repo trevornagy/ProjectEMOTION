@@ -102,6 +102,7 @@ namespace ProjectEMOTION
             _txtPleaseWait.Visibility = ViewStates.Gone;
             _txtWaitMessage.Visibility = ViewStates.Gone;
             _imgResult.Visibility = ViewStates.Visible;
+            _txtResult.MovementMethod = new Android.Text.Method.ScrollingMovementMethod();
             _txtResult.Visibility = ViewStates.Visible;
             _txtResult.Text = results;
         }

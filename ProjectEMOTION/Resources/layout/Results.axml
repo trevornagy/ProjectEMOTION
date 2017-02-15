@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="100">
+    android:weightSum="100"
+    android:scrollbars="vertical">
     <ImageView
         android:src="@android:drawable/ic_menu_gallery"
         android:layout_weight="65"
@@ -16,7 +17,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/txtResults"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:gravity="bottom"
+        android:isScrollContainer="false"
+        android:scrollbars="vertical"
+        android:scrollIndicators="right"
+        android:maxLines="10" />
     <TextView
         android:text="Please wait..."
         android:textAppearance="?android:attr/textAppearanceLarge"
